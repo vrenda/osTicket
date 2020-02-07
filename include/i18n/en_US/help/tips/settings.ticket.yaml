@@ -98,8 +98,7 @@ claim_tickets:
     content: >
         Enable this to auto-assign unassigned tickets to the responding Agent.
         <br><br>
-        Reopened tickets are always assigned to the last respondent unless auto
-        assign on reopen is disabled on the Department level.
+        Reopened tickets are always assigned to the last respondent.
 
 collaborator_ticket_visibility:
     title: Collaborator Tickets Visibility

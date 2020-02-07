@@ -477,8 +477,8 @@ if ($thisstaff->hasPerm(Ticket::PERM_CREATE, false)) {
 }
 
 
-$ost->addExtraHeader('<script type="text/javascript" src="js/ticket.js?bcf1a6f"></script>');
-$ost->addExtraHeader('<script type="text/javascript" src="js/thread.js?bcf1a6f"></script>');
+$ost->addExtraHeader('<script type="text/javascript" src="js/ticket.js"></script>');
+$ost->addExtraHeader('<script type="text/javascript" src="js/thread.js"></script>');
 $ost->addExtraHeader('<meta name="tip-namespace" content="tickets.queue" />',
     "$('#content').data('tipNamespace', 'tickets.queue');");
 
@@ -495,14 +495,9 @@ if($ticket) {
             $f->filterFields(function($f) { return !$f->isStorable(); });
             $f->addMissingFields();
         }
-    } elseif($_REQUEST['a'] == 'print')
-        if (!extension_loaded('mbstring'))
-            $errors['err'] = sprintf('%s %s',
-                'mbstring',
-                __('extension required to print ticket to PDF'));
-        elseif (!$ticket->pdfExport($_REQUEST['psize'], $_REQUEST['notes'], $_REQUEST['events']))
-            $errors['err'] = __('Unable to export the ticket to PDF for print.')
-                .' '.__('Internal error occurred');
+    } elseif($_REQUEST['a'] == 'print' && !$ticket->pdfExport($_REQUEST['psize'], $_REQUEST['notes']))
+        $errors['err'] = __('Unable to export the ticket to PDF for print.')
+            .' '.__('Internal error occurred');
 } else {
     $inc = 'templates/queue-tickets.tmpl.php';
     if ($_REQUEST['a']=='open' &&

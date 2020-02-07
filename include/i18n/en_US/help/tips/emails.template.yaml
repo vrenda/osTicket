@@ -34,7 +34,7 @@ language:
         Template Set</span>. Language packs are available on osTicket.com.
     links:
       - title: osTicket Language Packs
-        href: https://osticket.com/download
+        href: http://osticket.com/download
 
 status:
     title: Status

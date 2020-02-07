@@ -1,5 +1,4 @@
 <?php
-
 /*********************************************************************
     class.ticket.php
 
@@ -13,40 +12,37 @@
     See LICENSE.TXT for details.
 
     vim: expandtab sw=4 ts=4 sts=4:
- **********************************************************************/
-include_once(INCLUDE_DIR . 'class.thread.php');
-include_once(INCLUDE_DIR . 'class.staff.php');
-include_once(INCLUDE_DIR . 'class.client.php');
-include_once(INCLUDE_DIR . 'class.team.php');
-include_once(INCLUDE_DIR . 'class.email.php');
-include_once(INCLUDE_DIR . 'class.dept.php');
-include_once(INCLUDE_DIR . 'class.topic.php');
-include_once(INCLUDE_DIR . 'class.lock.php');
-include_once(INCLUDE_DIR . 'class.file.php');
-include_once(INCLUDE_DIR . 'class.export.php');
-include_once(INCLUDE_DIR . 'class.attachment.php');
-include_once(INCLUDE_DIR . 'class.banlist.php');
-include_once(INCLUDE_DIR . 'class.template.php');
-include_once(INCLUDE_DIR . 'class.variable.php');
-include_once(INCLUDE_DIR . 'class.priority.php');
-include_once(INCLUDE_DIR . 'class.sla.php');
-include_once(INCLUDE_DIR . 'class.canned.php');
-require_once(INCLUDE_DIR . 'class.dynamic_forms.php');
-require_once(INCLUDE_DIR . 'class.user.php');
-require_once(INCLUDE_DIR . 'class.collaborator.php');
-require_once(INCLUDE_DIR . 'class.task.php');
-require_once(INCLUDE_DIR . 'class.faq.php');
+**********************************************************************/
+include_once(INCLUDE_DIR.'class.thread.php');
+include_once(INCLUDE_DIR.'class.staff.php');
+include_once(INCLUDE_DIR.'class.client.php');
+include_once(INCLUDE_DIR.'class.team.php');
+include_once(INCLUDE_DIR.'class.email.php');
+include_once(INCLUDE_DIR.'class.dept.php');
+include_once(INCLUDE_DIR.'class.topic.php');
+include_once(INCLUDE_DIR.'class.lock.php');
+include_once(INCLUDE_DIR.'class.file.php');
+include_once(INCLUDE_DIR.'class.export.php');
+include_once(INCLUDE_DIR.'class.attachment.php');
+include_once(INCLUDE_DIR.'class.banlist.php');
+include_once(INCLUDE_DIR.'class.template.php');
+include_once(INCLUDE_DIR.'class.variable.php');
+include_once(INCLUDE_DIR.'class.priority.php');
+include_once(INCLUDE_DIR.'class.sla.php');
+include_once(INCLUDE_DIR.'class.canned.php');
+require_once(INCLUDE_DIR.'class.dynamic_forms.php');
+require_once(INCLUDE_DIR.'class.user.php');
+require_once(INCLUDE_DIR.'class.collaborator.php');
+require_once(INCLUDE_DIR.'class.task.php');
+require_once(INCLUDE_DIR.'class.faq.php');
 
 class Ticket extends VerySimpleModel
-implements RestrictedAccess, Threadable, Searchable
-{
+implements RestrictedAccess, Threadable, Searchable {
     static $meta = array(
         'table' => TICKET_TABLE,
         'pk' => array('ticket_id'),
-        'select_related' => array(
-            'topic', 'staff', 'user', 'team', 'dept',
-            'sla', 'thread', 'user__default_email', 'status'
-        ),
+        'select_related' => array('topic', 'staff', 'user', 'team', 'dept',
+            'sla', 'thread', 'user__default_email', 'status'),
         'joins' => array(
             'user' => array(
                 'constraint' => array('user_id' => 'User.id')

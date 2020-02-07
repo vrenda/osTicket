@@ -83,7 +83,6 @@ $entries->filter(array('type__in' => array_keys($entryTypes)))->order_by("{$orde
                         </div>
                     </td>
                 </tr>
-                <tr><td>&nbsp;</td></tr>
             <?php
             } ?>
         </tbody>

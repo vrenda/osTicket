@@ -92,14 +92,14 @@ $info = Format::htmlchars(($errors && $_POST)?$_POST:$info);
 </table>
 <hr>
 <p style="text-align: center;">
-    <input type="submit" value="<?php echo __('Register'); ?>"/>
-    <input type="button" value="<?php echo __('Cancel'); ?>" onclick="javascript:
+    <input type="submit" value="Register"/>
+    <input type="button" value="Cancel" onclick="javascript:
         window.location.href='index.php';"/>
 </p>
 </form>
 <?php if (!isset($info['timezone'])) { ?>
 <!-- Auto detect client's timezone where possible -->
-<script type="text/javascript" src="<?php echo ROOT_PATH; ?>js/jstz.min.js?bcf1a6f"></script>
+<script type="text/javascript" src="<?php echo ROOT_PATH; ?>js/jstz.min.js"></script>
 <script type="text/javascript">
 $(function() {
     var zone = jstz.determine();
