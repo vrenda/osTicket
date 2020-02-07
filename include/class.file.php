@@ -388,12 +388,15 @@ class AttachmentFile extends VerySimpleModel {
                 $file['data'] = base64_decode($file['data']);
             }
         }
-        if (isset($file['data'])) {
+
+        if (!isset($file['data']) && isset($file['data_cbk'])
+                && is_callable($file['data_cbk'])) {
             // Allow a callback function to delay or avoid reading or
             // fetching ihe file contents
-            if (is_callable($file['data']))
-                $file['data'] = $file['data']();
+            $file['data'] = $file['data_cbk']();
+        }
 
+        if (isset($file['data'])) {
             list($key, $file['signature'])
                 = self::_getKeyAndHash($file['data']);
             if (!$file['key'])

@@ -398,6 +398,7 @@ if($_POST && !$errors):
 
                     if(($ticket=Ticket::open($vars, $errors))) {
                         $msg=__('Ticket created successfully');
+                        $redirect = 'tickets.php?id='.$ticket->getId();
                         $_REQUEST['a']=null;
                         if (!$ticket->checkStaffPerm($thisstaff) || $ticket->isClosed())
                             $ticket=null;
@@ -495,9 +496,14 @@ if($ticket) {
             $f->filterFields(function($f) { return !$f->isStorable(); });
             $f->addMissingFields();
         }
-    } elseif($_REQUEST['a'] == 'print' && !$ticket->pdfExport($_REQUEST['psize'], $_REQUEST['notes']))
-        $errors['err'] = __('Unable to export the ticket to PDF for print.')
-            .' '.__('Internal error occurred');
+    } elseif($_REQUEST['a'] == 'print')
+        if (!extension_loaded('mbstring'))
+            $errors['err'] = sprintf('%s %s',
+                'mbstring',
+                __('extension required to print ticket to PDF'));
+        elseif (!$ticket->pdfExport($_REQUEST['psize'], $_REQUEST['notes'], $_REQUEST['events']))
+            $errors['err'] = __('Unable to export the ticket to PDF for print.')
+                .' '.__('Internal error occurred');
 } else {
     $inc = 'templates/queue-tickets.tmpl.php';
     if ($_REQUEST['a']=='open' &&

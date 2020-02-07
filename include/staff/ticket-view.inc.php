@@ -22,7 +22,7 @@ $mylock = ($lock && $lock->getStaffId() == $thisstaff->getId()) ? $lock : null;
 $id    = $ticket->getId();    //Ticket ID.
 $isManager = $dept->isManager($thisstaff); //Check if Agent is Manager
 $canRelease = ($isManager || $role->hasPerm(Ticket::PERM_RELEASE)); //Check if Agent can release tickets
-$canAnswer = ($isManager || $role->hasPerm(Ticket::PERM_REPLY)); //Check if Agent can mark as answered/unanswered
+$canMarkAnswered = ($isManager || $role->hasPerm(Ticket::PERM_MARKANSWERED)); //Check if Agent can mark as answered/unanswered
 
 //Useful warnings and errors the user might want to know!
 if ($ticket->isClosed() && !$ticket->isReopenable())
@@ -165,7 +165,7 @@ if($ticket->isOverdue())
                     <?php
                     }
                  }
-                 if($ticket->isOpen() && $canAnswer) {
+                 if($ticket->isOpen() && $canMarkAnswered) {
                     if($ticket->isAnswered()) { ?>
                     <li><a href="#tickets/<?php echo $ticket->getId();
                         ?>/mark/unanswered" class="ticket-action"
@@ -595,6 +595,7 @@ if($ticket->isOverdue())
 <br>
 <?php
 foreach (DynamicFormEntry::forTicket($ticket->getId()) as $form) {
+    $form->addMissingFields();
     //Find fields to exclude if disabled by help topic
     $disabled = Ticket::getMissingRequiredFields($ticket, true);
 
@@ -649,6 +650,13 @@ foreach (DynamicFormEntry::forTicket($ticket->getId()) as $form) {
                     }
                     else
                       echo $v;
+
+                    $a = $field->getAnswer();
+                    $hint = ($field->isRequiredForClose() && $a && !$a->getValue() && get_class($field) != 'BooleanField') ?
+                        sprintf('<i class="icon-warning-sign help-tip warning field-label" data-title="%s" data-content="%s"
+                        /></i>', __('Required to close ticket'),
+                        __('Data is required in this field in order to close the related ticket')) : '';
+                    echo $hint;
                   ?>
               </a>
             <?php

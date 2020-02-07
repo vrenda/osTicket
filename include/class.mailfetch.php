@@ -54,10 +54,17 @@ class MailFetcher {
         if ($this->ht) {
             // Support Exchange shared mailbox auth
             // (eg. user@domain.com\shared@domain.com)
-            $usernames = explode('\\', $this->ht['username'], 2);
-            if (count($usernames) == 2) {
-                $this->authuser = $usernames[0];
-                $this->username = $usernames[1];
+            $usernames = explode('\\', $this->ht['username']);
+            $count = count($usernames);
+            if ($count == 3) {
+                $this->authuser = $usernames[0].'\\'.$usernames[1];
+                $this->username = $usernames[2];
+            } elseif ($count == 2) {
+                if (strpos($usernames[0], '@') !== false) {
+                    $this->authuser = $usernames[0];
+                    $this->username = $usernames[1];
+                } else
+                    $this->username = $usernames[0].'\\'.$usernames[1];
             } else {
                 $this->username = $this->ht['username'];
             }
@@ -831,7 +838,7 @@ class MailFetcher {
                 else {
                     // only fetch the body if necessary
                     $self = $this;
-                    $file['data'] = function() use ($self, $mid, $a) {
+                    $file['data_cbk'] = function() use ($self, $mid, $a) {
                         return $self->decode(imap_fetchbody($self->mbox,
                             $mid, $a['index']), $a['encoding']);
                     };
@@ -845,7 +852,9 @@ class MailFetcher {
                         $file['id'] = $f->getId();
                 }
                 catch (FileUploadError $ex) {
-                    $file['error'] = $file['name'] . ': ' . $ex->getMessage();
+                    $name = $file['name'];
+                    $file = array();
+                    $file['error'] = Format::htmlchars($name) . ': ' . $ex->getMessage();
                 }
 
                 $vars['attachments'][] = $file;

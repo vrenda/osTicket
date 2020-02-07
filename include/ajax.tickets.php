@@ -41,6 +41,7 @@ class TicketsAjaxAPI extends AjaxController {
                 'tickets' => SqlAggregate::COUNT('ticket_id', true),
             ))
             ->order_by(SqlAggregate::SUM(new SqlCode('Z1.relevance')), QuerySet::DESC)
+            ->distinct('user__default_email__address')
             ->limit($limit);
 
         $q = $_REQUEST['q'];
@@ -1273,7 +1274,7 @@ function refer($tid, $target=null) {
         if (!($ticket=Ticket::lookup($tid)))
             Http::response(404, __('No such ticket'));
 
-        if (!$ticket->checkStaffPerm($thisstaff, Ticket::PERM_REPLY) && !$thisstaff->isManager())
+        if (!$ticket->checkStaffPerm($thisstaff, Ticket::PERM_MARKANSWERED) && !$thisstaff->isManager())
             Http::response(403, __('Permission denied'));
 
         $errors = array();
