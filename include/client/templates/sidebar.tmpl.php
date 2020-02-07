@@ -1,7 +1,7 @@
 <?php
 $BUTTONS = isset($BUTTONS) ? $BUTTONS : true;
 ?>
-    <div class="sidebar ">
+    <div class="sidebar pull-right">
 <?php if ($BUTTONS) { ?>
         <div class="front-page-button flush-right">
 <p>

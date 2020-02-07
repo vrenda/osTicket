@@ -22,8 +22,9 @@ $section = 'home';
 require(CLIENTINC_DIR . 'header.inc.php');
 ?>
 <div id="landing_page">
-    <?php include 'ipclient.inc.php'; ?>
+    <?php include CLIENTINC_DIR.'templates/sidebar.tmpl.php'; ?>
     <div class="main-content">
+        <?php include 'ipclient.inc.php'; ?>
         <?php
         if ($cfg && $cfg->isKnowledgebaseEnabled()) { ?>
             <div class="search-form">
@@ -44,8 +45,6 @@ require(CLIENTINC_DIR . 'header.inc.php');
             </div>
     </div>
     <div class="clear"></div>
-    <?php include CLIENTINC_DIR.'templates/sidebar.tmpl.php'; ?>
-    
     <div>
         <?php
         if ($cfg && $cfg->isKnowledgebaseEnabled()) {

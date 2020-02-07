@@ -41,8 +41,9 @@ if ($info['topicId'] && ($topic = Topic::lookup($info['topicId']))) {
 <form id="ticketForm" method="post" action="open.php" enctype="multipart/form-data">
     <?php csrf_token(); ?>
     <input type="hidden" name="a" value="open">
+    <input type="hidden" id="matricola" name="matricola" value="">
     <table width="800" cellpadding="1" cellspacing="0" border="0">
-        <tbody>
+        <!-- <tbody>
             <tr>
                 <td colspan="2">
                     <hr />
@@ -56,15 +57,16 @@ if ($info['topicId'] && ($topic = Topic::lookup($info['topicId']))) {
                     <select id="org_id" name="org_id" required>
                         <option value="" selected="selected">&mdash; <?php echo __('Seleziona Sede Operativa'); ?> &mdash;</option>
                         <?php
-                        foreach ($orgs = Organization::objects() as $id => $name) {
-                            echo sprintf('<option value="%d">%s</option>', $orgs[$id]->getId(), $name);
-                        } ?>
+                          foreach ($orgs = Organization::objects() as $id => $name) {
+                             // echo sprintf('<option value="%d">%s</option>', $orgs[$id]->getId(), $name);
+                          } 
+                        ?>
                     </select>
                     <font class="error">*&nbsp;</font>
                 </td>
             </tr>
-        </tbody>
-        <tbody>
+        </tbody> -->
+        <tbody id="user-form">
             <?php
             if (!$thisclient) {
                 $uform = UserForm::getUserForm()->getForm($_POST);
@@ -174,3 +176,12 @@ if ($info['topicId'] && ($topic = Topic::lookup($info['topicId']))) {
             window.location.href='index.php';">
     </p>
 </form>
+<script type="text/javascript" language="javascript">
+    $( "#ticketForm" ).submit(function( event ) {
+    // event.preventDefault();
+    var matricola = $('#user-form input:first').val() ? $('#user-form input:first').val() : $('#user-form input:hidden:first').val();
+    // console.log( "#ticketForm.submit matricola", matricola );
+    $('input:hidden#matricola').val(matricola);
+    return true;
+});
+</script>

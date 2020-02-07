@@ -3968,6 +3968,52 @@ implements RestrictedAccess, Threadable, Searchable
         //     );
         // }
 
+        // $ost->logDebug('Creating Ticket vars', sprintf(_S('%1$s'), json_encode($vars)), true);
+        // if ($matricola = $vars['matricola']) {
+        //     $ost->logDebug('Creating Ticket $matricola',  sprintf(_S('%1$s'), $matricola), true);
+        //     $dynamicList =  DynamicList::lookup(9);
+        //     $item     = $dynamicList->getItem($matricola);
+        //     $itemData = $item->getFilterData();
+        //     $ost->logDebug('Creating Ticket $itemData',  sprintf(_S('%1$s'), json_encode($itemData)), true);
+
+        //     $orgName = $itemData['.66'];
+        //     $queryORG = Organization::lookup(['name' => $orgName]);
+        //     $ost->logDebug('Creating Ticket $queryORG',  sprintf(_S('%1$s'), json_encode($queryORG)), true);
+        // }
+        //$userForm = UserForm::getUserForm()->getForm($vars);
+        //$ost->logDebug('Creating Ticket $userForm',  sprintf(_S('%1$s'), json_encode($userForm)), true );
+
+        // $userFormFields = UserForm::getUserForm()->getFields();
+        // $ost->logDebug('Creating Ticket $userFormFields',  sprintf(_S('%1$s'), json_encode($userFormFields)), true );
+
+        // $dynamicList =  DynamicList::lookup(9);
+
+        // $prop_fields = ($dynamicList) ? $dynamicList->getSummaryFields() : array();
+        // $ost->logDebug('Creating Ticket $prop_fields',  sprintf(_S('%1$s'), json_encode($prop_fields)), true );
+
+        // $item  = $dynamicList->getItem($vars['matricola']);
+        // $ost->logDebug('Creating Ticket $item',  sprintf(_S('%1$s'), json_encode($item)), true);
+
+        // $filteredData = $item->getFilterData();
+        // $ost->logDebug('Creating Ticket $filteredData',  sprintf(_S('%1$s'), json_encode($filteredData)), true);
+
+        // $orgName = $filteredData['.66'];
+        // $queryORG = Organization::lookup(['name' => $orgName]);
+        // $ost->logDebug('Creating Ticket $queryORG',  sprintf(_S('%1$s'), json_encode($queryORG)), true);
+
+        // $id    = $item->getId();
+        // $ost->logDebug('Creating Ticket $id',  sprintf(_S('%1$s'), json_encode($id)), true );
+
+        // $props = $item->getConfiguration();
+        // $ost->logDebug('Creating Ticket $props',  sprintf(_S('%1$s'), json_encode($props)), true );
+
+        // foreach ($prop_fields as $F) {
+        //     $ost->logDebug('Creating Ticket $F',  sprintf(_S('%1$s'), json_encode($F)), true );
+
+        //     $field = $props[$F->get('id')];
+        //     $ost->logDebug('Creating Ticket $field',  sprintf(_S('%1$s'), json_encode($field)), true );
+        // }
+
 
         $id = 0;
         $fields = array();
@@ -4003,6 +4049,26 @@ implements RestrictedAccess, Threadable, Searchable
                 $errors['duedate'] = __('Invalid due date');
             elseif (Misc::user2gmtime($vars['duedate']) <= Misc::user2gmtime())
                 $errors['duedate'] = __('Due date must be in the future');
+        }
+
+        $ost->logDebug('Creating Ticket vars', sprintf(_S('%1$s'), json_encode($vars)), true);
+        $queryORG = null;
+        if ($matricola = $vars['matricola']) {
+            $ost->logDebug('Creating Ticket $matricola',  sprintf(_S('%1$s'), $matricola), true);
+            $dynamicList =  DynamicList::lookup(9);
+            $item     = $dynamicList->getItem($matricola);
+            if($item) {
+                $itemData = $item->getFilterData();
+                $ost->logDebug('Creating Ticket $itemData',  sprintf(_S('%1$s'), json_encode($itemData)), true);
+    
+                $ouName = $itemData['.66'];
+                $ost->logDebug('Creating Ticket $ouName',  sprintf(_S('%1$s'), json_encode($ouName)), true);
+                $queryORG = Organization::lookup(['name' => $ouName]);
+                $ost->logDebug('Creating Ticket $queryORG',  sprintf(_S('%1$s'), json_encode($queryORG)), true);
+            } else {
+                $ost->logDebug('Creating Ticket $matricola ' . $matricola . ' not found', sprintf(_S('%1$s'), $matricola), true);
+            }
+            
         }
 
         $topic_forms = array();
@@ -4107,11 +4173,12 @@ implements RestrictedAccess, Threadable, Searchable
 
                 $user_form = UserForm::getUserForm()->getForm($vars);
                 $can_create = !$thisstaff || $thisstaff->hasPerm(User::PERM_CREATE);
-                
+
                 // $ost->logDebug('Creating Ticket vars', sprintf(_S('%1$s'), json_encode($vars)), true );
                 $clean_form = $user_form->getClean();
-                $clean_form['org_id'] = ($vars['org_id']) ? $vars['org_id'] : 1;
-                
+                // $clean_form['org_id'] = ($vars['org_id']) ? $vars['org_id'] : 1;
+                $clean_form['org_id'] = $queryORG ? $queryORG->getId() : 1;
+
                 if (
                     !$user_form->isValid($field_filter('user'))
                     || !($user = User::fromVars($clean_form, $can_create))
@@ -4122,12 +4189,16 @@ implements RestrictedAccess, Threadable, Searchable
                 }
             } else {
 
-                $organization = ($vars['org_id'])  ? Organization::lookup($vars['org_id']) : Organization::lookup(1);
-                  
-                if (!$user->getOrganization() || $organization->getId() > 1)     
-                    $user->setOrganization($organization);
-                
+                // $organization = ($vars['org_id'])  ? Organization::lookup($vars['org_id']) : Organization::lookup(1);
+
+                // if (!$user->getOrganization() || $organization->getId() > 1)
+                //     $user->setOrganization($organization);
+                $user->setOrganization($queryORG ? $queryORG : Organization::lookup(1));
             }
+
+            
+
+
         }
 
         if (!$form->isValid($field_filter('ticket')))

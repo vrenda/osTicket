@@ -85,3 +85,13 @@ input.dp {
 .delete-draft:hover {
     background-color: #fc9f41 !important;
 }
+
+p.client-ip {
+    font-size: xx-large;
+    text-align: center;
+}
+
+p.client-ip > span {
+    font-weight: bold;
+}
+

@@ -25,5 +25,5 @@ function get_client_ip() {
 
 $clientIP = get_client_ip();
 if ($clientIP){ ?>
-	<h3 class="client-ip pull-right"> Il tuo IP: <?php echo $clientIP; ?></h3>
+	<p class="client-ip"> Indirizzo IP da comunicare<br><span><?php echo $clientIP; ?></span></p>
 <?php } ?>
